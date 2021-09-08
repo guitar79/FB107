@@ -2,6 +2,7 @@
 
 # anaconda environment
 conda create -n FB107_Python_env python=3.8
+
 conda env list
 
 # activate 가상환경 시작
