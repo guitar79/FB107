@@ -97,8 +97,6 @@ def moveFile(file,isFB):
 
     ### 파일의 이름을 토대로 연, 월, 일, 시간, 분, 초를 찾아냄
     fileName = file.split('-')
-    YYYYMMDD = fileName[1]
-    HHMISS = fileName[2]
     YYYY = fileName[1][0:4]
     MM = fileName[1][4:6]
     DD = fileName[1][6:8]
@@ -108,6 +106,7 @@ def moveFile(file,isFB):
 
     ### 새롭게 옮길 파일의 디렉토리
     Dir='.%s/%s/%s/%s/%s/FB107L-%s%s%s-%s%s%s-KST.JPG' % (header,YYYY,MM,DD,HH,YYYY,MM,DD,HH,MI,SS)
+
 
 
 # --------------------------------------------------------------------------
