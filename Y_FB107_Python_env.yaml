@@ -61,4 +61,6 @@ dependencies:
   - yaml=0.2.5=he774522_0
   - zlib=1.2.11=h62dcd97_4
   - zstd=1.4.9=h19a0ad4_0
+  - pip:
+    - exifread==2.3.2
 prefix: C:\Users\HANSUNG\anaconda3\envs\FB107_Python_env
