@@ -79,14 +79,23 @@ def moveFile(file,isFB):
     print('move')
     header = ""
     logDir = "./log.txt"
-    f = open(logDir,'a')
+    logupdate=""
+
+    ### 유성이 검출
     if isFB == True:
         header = "/FB"
         logupdate = "[%s/%s/%s %s:%s:%s] A fireball found"
+        
+    ### 검출 안됨
     else:
         header = "/NotFB"
         logupdate = "[%s/%s/%s %s:%s:%s] Fireball not found"
+
+    ### 로그를 업데이트
+    f = open(logDir, 'a')
     f.write(logupdate)
+
+    ### 파일의 이름을 토대로 연, 월, 일, 시간, 분, 초를 찾아냄
     fileName = file.split('-')
     YYYYMMDD = fileName[1]
     HHMISS = fileName[2]
@@ -96,8 +105,8 @@ def moveFile(file,isFB):
     HH = fileName[2][0:2]
     MI = fileName[2][2:4]
     SS = fileName[2][4:6]
-    logDir = '.log.txt'
 
+    ### 새롭게 옮길 파일의 디렉토리
     Dir='.%s/%s/%s/%s/%s/FB107L-%s%s%s-%s%s%s-KST.JPG' % (header,YYYY,MM,DD,HH,YYYY,MM,DD,HH,MI,SS)
 
 
@@ -105,8 +114,13 @@ def moveFile(file,isFB):
 def main():
 # --------------------------------------------------------------------------
     curTime = getYYYYMMDDHHMISS()
+
+    ### -60초 전 -> 1분 전에 찍힌 파일들을 검토
     YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime,-60))
+
+    #YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
     TargetFiles = getFiles(YYYY, MM, DD, HH, MI)
+    
     for file in TargetFiles:
         if isFireBall(file) == True:
             moveFile(file,True)
