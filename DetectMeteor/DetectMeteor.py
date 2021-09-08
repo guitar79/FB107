@@ -10,7 +10,7 @@ ret, mask = cv2.threshold( src, minlight, 255, cv2.THRESH_BINARY)
 lines = cv2.HoughLinesP(mask, 1, np.pi / 180., 160, minLineLength=100, maxLineGap=30)
 # threshold: 일치해야 하는 점의 개수
 # minLineLength: 직선의 최소 길이
-# maxLineGap: 직선 간 최소 간격 : 구름을 검출할 경우, 이 값을 달리했을 때 직선의 개수가 크게 변한다. 반면, 맑은 하늘에 유성 하나 있는 경우는
+# maxLineGap: 직선을 이루는 점 간 최소 간격
 
 # 컬러 영상으로 변경 (영상에 빨간 직선을 그리기 위해)
 dst = cv2.cvtColor(src, cv2.COLOR_GRAY2BGR)
