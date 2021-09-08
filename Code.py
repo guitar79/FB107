@@ -107,6 +107,8 @@ def moveFile(file,isFB):
     ### 새롭게 옮길 파일의 디렉토리
     Dir='.%s/%s/%s/%s/%s/FB107L-%s%s%s-%s%s%s-KST.JPG' % (header,YYYY,MM,DD,HH,YYYY,MM,DD,HH,MI,SS)
 
+    ### move file to Dir
+
 
 
 # --------------------------------------------------------------------------
@@ -119,7 +121,8 @@ def main():
 
     #YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
     TargetFiles = getFiles(YYYY, MM, DD, HH, MI)
-    
+
+
     for file in TargetFiles:
         if isFireBall(file) == True:
             moveFile(file,True)
