@@ -1,6 +1,6 @@
 # FB107
-anaconda environment
 
+# anaconda environment
 conda create -n FB107_Python_env python=3.8
 conda env list
 
