@@ -68,20 +68,25 @@ def isFireBall(file):
         return True
     else:
         return False
-# --------------------------------------------------------------------------
+
 ###(유성인지 아닌지 판별)
+
+
 
 # --------------------------------------------------------------------------
 def moveFile(file,isFB):
 # --------------------------------------------------------------------------
     print('move')
     header = ""
+    logDir = "./log.txt"
+    f = open(logDir,'a')
     if isFB == True:
         header = "/FB"
         logupdate = "[%s/%s/%s %s:%s:%s] A fireball found"
     else:
         header = "/NotFB"
         logupdate = "[%s/%s/%s %s:%s:%s] Fireball not found"
+    f.write(logupdate)
     fileName = file.split('-')
     YYYYMMDD = fileName[1]
     HHMISS = fileName[2]
