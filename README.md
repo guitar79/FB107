@@ -20,9 +20,11 @@ windows
 deactivate
 
 # install module
-conda install
-conda install -c conda-forge
+conda install spyder
 
+conda install opencv
+
+conda install -c conda-forge exifread
 
 # 가상환경 내보내기 (export)
 conda env export > FB107_Python_env.yaml
