@@ -33,7 +33,9 @@ def write_log(log_file, log_str):
 
 
 def getFullnameListOfallFiles(dirName):
-    ##############################################3
+    ##############################################
+    # "dirName" 안에 있는 모든 파일을 리스트로 반환 #
+    ##############################################
     import os
     # create a list of file and sub directories
     # names in the given directory
@@ -49,11 +51,12 @@ def getFullnameListOfallFiles(dirName):
         else:
             allFiles.append(fullPath)
 
-    return allFiles
+    return allFiles #list
 
 
 def getFullnameListOfallsubDirs1(dirName):
-    ##############################################3
+    ##############################################
+    #
     import os
     allFiles = list()
     for file in sorted(os.listdir(dirName)):

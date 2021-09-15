@@ -2,13 +2,30 @@ import os
 from datetime import datetime
 import FB107_utilities
 
-base_dir_name = '/mnt/FB107/STIL/'
+base_dir_name = '../STIL/'
 
-fullnames = photo_utilities.getFullnameListOfallFiles(base_dir_name)
+fullnames = FB107_utilities.getFullnameListOfallFiles(base_dir_name)
 
-for ext_name in ext_names :
+for fullname in fullnames :
+    fullname = fullnames[0]
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
+    
+for i in range(len(fullnames)) :
+    fullname = fullnames[0]
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
+    
+    fullnames[i+1]
+    fullnames[i]
 
-    # for debugging
+    
+    processing_log = "#This file is created using Python : https://github.com/guitar79/MODIS_hdf_Python\n"
+    processing_log += "filename, brightness, star No, FB\n".format(filename, aaa, bbb, bbb)
+    processing_log += "{}, {}, {}, {}".format(filename, aaa, bbb, bbb)
+           
+            
+            
     debuging = False
     add_log = True
     if add_log == True:
