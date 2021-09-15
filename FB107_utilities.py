@@ -69,7 +69,7 @@ def getFullnameListOfallsubDirs1(dirName):
 
 
 def getFullnameListOfallsubDirs(dirName):
-    ##############################################3
+    ###############################################
     import os
     allFiles = list()
     for it in os.scandir(dirName):
@@ -81,6 +81,9 @@ def getFullnameListOfallsubDirs(dirName):
 
 
 def checkDuplicated_jpg(fullname1, fullname2):
+    ###############################################
+    # 같은 내용의 .jpg 파일이 있는지 확인              #
+    ###############################################
     import cv2
     # pip install opencv-python
     # pip install opencv-contrib-python
@@ -106,12 +109,18 @@ def checkDuplicated_jpg(fullname1, fullname2):
 
 # for checking time
 def print_working_time(cht_start_time):
+    ###############################################
+    # 프로그램이 작동하고 있는 시간을 반환              #
+    ###############################################
     from datetime import datetime
     working_time = (datetime.now() - cht_start_time)  # total days for downloading
     return print('working time ::: %s' % (working_time))
 
 
 def get_image_datetime_str(fullname):
+    ####################################################
+    # 파일의 풀네임을 입력받아 YYYYMMDD-HHMISS 형식으로 반환 #
+    ####################################################
     import exifread
     f = open(fullname, 'rb')
     tags = exifread.process_file(f)
