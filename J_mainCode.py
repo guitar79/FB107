@@ -147,11 +147,9 @@ def main():
 
     for i in range(length):
         fileName = infos[i][0]
-        code = infos[i][1]
-        if code == "0":
-            code = "FB"
-        elif code == "1":
-            code = "Default"
+        Code = infos[i][1]
+        codeList = ["FB", "Default"]
+        code = codeList[int(Code)]
 
         if code == "FB":
             moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD), fileName, code)
