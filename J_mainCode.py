@@ -137,12 +137,22 @@ def main():
 
     processing_Dir = "%s%s/%s/%s" % (save_Dir_Name,YYYY,MM,DD)
 
-    fullnames = FB.getFullnameListOfallFiles(processing_Dir)
-    length = len(fullnames)
+    N = input()
+    length = int(N)
+    infos = []
+    for i in range(length):
+        A = input().split(',')
+        A[1]=A[1][1:]
+        infos.append([A[0][-1], A[1]])
 
     for i in range(length):
-        fileName = fullnames[i]
-        code = ""
+        fileName = infos[i][0]
+        code = infos[i][1]
+        if code == "0":
+            code = "FB"
+        elif code == "1":
+            code = "Default"
+
         if code == "FB":
             moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD), fileName, code)
         elif code == "Cloud":
