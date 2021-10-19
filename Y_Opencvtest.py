@@ -3,7 +3,7 @@ import numpy
 # load images
 image1 = cv2.imread("leftImageRain.jpg")
 image2 = cv2.imread("rightImageRain.jpg")
-thrVal = 3
+thrVal = 3 #이거보다 작으면 색반전 적용
 # compute difference
 difference = cv2.absdiff(image2, image1)
 diffMal = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
@@ -18,7 +18,7 @@ for i in range(0, height):
         temp = 255
     diffMal[i][j] = temp
 ret, mask = cv2.threshold(Conv_hsv_Gray, thrVal, 255, cv2.THRESH_BINARY_INV)
-difference[mask != 255] = [0, 0, 255]
+difference[mask != 255] = [0, 0, 255] #mask : 색반전?
 
 # add the red mask to the images to make the differences obvious
 image1[mask != 255] = [0, 0, 255]

@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-src = cv2.imread('diff.png', cv2.IMREAD_GRAYSCALE)
+src = cv2.imread('diff.png', cv2.IMREAD_GRAYSCALE) #different와 같이 작용
 minlight = 100
 # 에지 검출
 #edges = cv2.Canny(src, 50, 150)
