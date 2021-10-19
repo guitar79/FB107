@@ -72,28 +72,18 @@ def isFireBall(file):
 ###(유성인지 아닌지 판별)
 
 
+# --------------------------------------------------------------------------
+def updateLog(data):
+# --------------------------------------------------------------------------
+    logDir = ".log.txt"
+    if not os.path.exists(logdir):
+        os.mkdir(logDir)
+    f = open(logDir, 'a')
+    f.write(data)
 
 # --------------------------------------------------------------------------
 def moveFile(file,isFB):
 # --------------------------------------------------------------------------
-    print('move')
-    header = ""
-    logDir = "./log.txt"
-    logupdate=""
-
-    ### 유성이 검출
-    if isFB == True:
-        header = "/FB"
-        logupdate = "[%s/%s/%s %s:%s:%s] A fireball found"
-        
-    ### 검출 안됨
-    else:
-        header = "/NotFB"
-        logupdate = "[%s/%s/%s %s:%s:%s] Fireball not found"
-
-    ### 로그를 업데이트
-    f = open(logDir, 'a')
-    f.write(logupdate)
 
     ### 파일의 이름을 토대로 연, 월, 일, 시간, 분, 초를 찾아냄
     fileName = file.split('-')
@@ -104,10 +94,48 @@ def moveFile(file,isFB):
     MI = fileName[2][2:4]
     SS = fileName[2][4:6]
 
+    print('move')
+    header = ""
+
+    ### 유성이 검출
+    if isFB == True:
+        header = "FB"
+        updateLog("[%s/%s/%s %s:%s:%s] A fireball found" % (YYYY,MM,DD,HH,MI,SS))
+        
+    ### 검출 안됨
+    else:
+        header = "NotFB"
+        updateLog("[%s/%s/%s %s:%s:%s] Fireball not found" % (YYYY,MM,DD,HH,MI,SS))
+
+
     ### 새롭게 옮길 파일의 디렉토리
-    Dir='.%s/%s/%s/%s/%s/FB107L-%s%s%s-%s%s%s-KST.JPG' % (header,YYYY,MM,DD,HH,YYYY,MM,DD,HH,MI,SS)
+    Dir='.%s/%s/%s/%s/%s' % (header,YYYY,MM,DD,HH)
+    FileName = 'FB107L-%s%s%s-%s%s%s-KST.JPG' % (YYYY,MM,DD,HH,MI,SS)
 
     ### move file to Dir
+    if not os.path.exists(Dir):
+        os.mkdir(Dir)
+
+    From = file
+    To = Dir + '/' + FileName
+    try:
+        fi = open(From,'rb')
+        dat = fi.read().encode("hex")
+        fi.close()
+    except:
+        updateLog("Error in opening file : [%s]" % From)
+        return
+
+    try:
+        fo = open(To, 'wb')
+        fo.write(dat)
+        fo.close()
+    except:
+        updateLog("Error in writing filr : [%s]" % To)
+        return
+
+
+
 
 
 
@@ -116,8 +144,8 @@ def main():
 # --------------------------------------------------------------------------
     curTime = getYYYYMMDDHHMISS()
 
-    ### -60초 전 -> 1분 전에 찍힌 파일들을 검토
-    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime,-60))
+    ### 59초 전 -> 1분 전에 찍힌 파일들을 검토
+    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime,-59))
 
     #YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
     TargetFiles = getFiles(YYYY, MM, DD, HH, MI)
