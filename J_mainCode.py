@@ -149,7 +149,10 @@ def main():
         fileName = infos[i][0]
         Code = infos[i][1]
         codeList = ["FB", "Default"]
-        code = codeList[int(Code)]
+        if int(Code) >= 0 and int(Code) < len(codeList):
+            code = codeList[int(Code)]
+        else:
+            updateLog("Error in receiving code")
 
         if code == "FB":
             moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD), fileName, code)
