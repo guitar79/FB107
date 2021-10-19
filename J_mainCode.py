@@ -1,21 +1,22 @@
 import time, os, sys, cv2, numpy
 import FB107_utilities as FB
 
+
 # --------------------------------------------------------------------------
 def getCurrentDate():
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
 
 
 # --------------------------------------------------------------------------
 def getYYYYMMDDHHMISS():
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     return time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
 
 
 # -------------------------------------------------------------------------------
 def calcYYYYMMDDHHMISS(YYYYMMDDHHMISS, Sec):
-# -------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------
     OldTime = time.mktime(time.strptime(YYYYMMDDHHMISS, "%Y%m%d%H%M%S"))
     NewTime = OldTime + Sec
     NewYYYYMMDDHHMISS = time.strftime("%Y%m%d%H%M%S", time.localtime(NewTime))
@@ -24,7 +25,7 @@ def calcYYYYMMDDHHMISS(YYYYMMDDHHMISS, Sec):
 
 # --------------------------------------------------------------------------
 def diffSecYYYYMMDDHHMISS(DT1, DT2):
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     time1 = time.mktime(time.strptime(DT1, "%Y%m%d%H%M%S"))
     time2 = time.mktime(time.strptime(DT2, "%Y%m%d%H%M%S"))
     sec = int(time1 - time2)
@@ -33,7 +34,7 @@ def diffSecYYYYMMDDHHMISS(DT1, DT2):
 
 # --------------------------------------------------------------------------
 def cvtToFieldYYYYMMDDHHMISS(YYYYMMDDHHMISS):
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     YYYY = YYYYMMDDHHMISS[:4]
     MM = YYYYMMDDHHMISS[4:6]
     DD = YYYYMMDDHHMISS[6:8]
@@ -45,7 +46,7 @@ def cvtToFieldYYYYMMDDHHMISS(YYYYMMDDHHMISS):
 
 # --------------------------------------------------------------------------
 def getFiles(YYYY, MM, DD, HH, MI):
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     Dir = './%s/%s/%s/%s' % (YYYY, MM, DD, HH)
     ret = ""
 
@@ -63,27 +64,27 @@ def getFiles(YYYY, MM, DD, HH, MI):
 
 # --------------------------------------------------------------------------
 def isFireBall(file):
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     if True:
         return True
     else:
         return False
+
 
 ###(유성인지 아닌지 판별)
 
 
 # --------------------------------------------------------------------------
 def updateLog(data):
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     logDir = ".log.txt"
-    if not os.path.exists(logdir):
-        os.mkdir(logDir)
     f = open(logDir, 'a')
     f.write(data)
 
+
 # --------------------------------------------------------------------------
-def moveFile(file,isFB):
-# --------------------------------------------------------------------------
+def moveFile(file, isFB):
+    # --------------------------------------------------------------------------
 
     ### 파일의 이름을 토대로 연, 월, 일, 시간, 분, 초를 찾아냄
     fileName = file.split('-')
@@ -100,17 +101,16 @@ def moveFile(file,isFB):
     ### 유성이 검출
     if isFB == True:
         header = "FB"
-        updateLog("[%s/%s/%s %s:%s:%s] A fireball found" % (YYYY,MM,DD,HH,MI,SS))
-        
+        updateLog("[%s/%s/%s %s:%s:%s] A fireball found" % (YYYY, MM, DD, HH, MI, SS))
+
     ### 검출 안됨
     else:
         header = "NotFB"
-        updateLog("[%s/%s/%s %s:%s:%s] Fireball not found" % (YYYY,MM,DD,HH,MI,SS))
-
+        updateLog("[%s/%s/%s %s:%s:%s] Fireball not found" % (YYYY, MM, DD, HH, MI, SS))
 
     ### 새롭게 옮길 파일의 디렉토리
-    Dir='.%s/%s/%s/%s/%s' % (header,YYYY,MM,DD,HH)
-    FileName = 'FB107L-%s%s%s-%s%s%s-KST.JPG' % (YYYY,MM,DD,HH,MI,SS)
+    Dir = '.%s/%s/%s/%s/%s' % (header, YYYY, MM, DD, HH)
+    FileName = 'FB107L-%s%s%s-%s%s%s-KST.JPG' % (YYYY, MM, DD, HH, MI, SS)
 
     ### move file to Dir
     if not os.path.exists(Dir):
@@ -119,7 +119,7 @@ def moveFile(file,isFB):
     From = file
     To = Dir + '/' + FileName
     try:
-        fi = open(From,'rb')
+        fi = open(From, 'rb')
         dat = fi.read().encode("hex")
         fi.close()
     except:
@@ -135,27 +135,22 @@ def moveFile(file,isFB):
         return
 
 
-
-
-
-
 # --------------------------------------------------------------------------
 def main():
-# --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     curTime = getYYYYMMDDHHMISS()
 
     ### 59초 전 -> 1분 전에 찍힌 파일들을 검토
-    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime,-59))
+    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime, -59))
 
-    #YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
+    # YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
     TargetFiles = getFiles(YYYY, MM, DD, HH, MI)
-
 
     for file in TargetFiles:
         if isFireBall(file) == True:
-            moveFile(file,True)
+            moveFile(file, True)
         else:
-            moveFile(file,False)
+            moveFile(file, False)
 
 
 main()
