@@ -1,6 +1,7 @@
 import time, os, sys, cv2, numpy
 import FB107_utilities as FB
 
+
 # --------------------------------------------------------------------------
 def getCurrentDate():
 # --------------------------------------------------------------------------
@@ -52,7 +53,6 @@ def getFiles(YYYY, MM, DD, HH, MI):
     for file in os.listdir(Dir):
 
         f = file.split('-')
-        YYYYMMDD = f[1]
         HHMISS = f[2]
         MINUTE = HHMISS[2:4]
         if MINUTE == MI:
@@ -68,6 +68,7 @@ def isFireBall(file):
         return True
     else:
         return False
+
 
 ###(유성인지 아닌지 판별)
 
@@ -89,13 +90,12 @@ ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
 def updateLog(data):
 # --------------------------------------------------------------------------
     logDir = ".log.txt"
-    if not os.path.exists(logdir):
-        os.mkdir(logDir)
     f = open(logDir, 'a')
     f.write(data)
 
+
 # --------------------------------------------------------------------------
-def moveFile(file,isFB):
+def moveFile(file, isFB):
 # --------------------------------------------------------------------------
 
     ### 파일의 이름을 토대로 연, 월, 일, 시간, 분, 초를 찾아냄
@@ -113,17 +113,16 @@ def moveFile(file,isFB):
     ### 유성이 검출
     if isFB == True:
         header = "FB"
-        updateLog("[%s/%s/%s %s:%s:%s] A fireball found" % (YYYY,MM,DD,HH,MI,SS))
-        
+        updateLog("[%s/%s/%s %s:%s:%s] A fireball found" % (YYYY, MM, DD, HH, MI, SS))
+
     ### 검출 안됨
     else:
         header = "NotFB"
-        updateLog("[%s/%s/%s %s:%s:%s] Fireball not found" % (YYYY,MM,DD,HH,MI,SS))
-
+        updateLog("[%s/%s/%s %s:%s:%s] Fireball not found" % (YYYY, MM, DD, HH, MI, SS))
 
     ### 새롭게 옮길 파일의 디렉토리
-    Dir='.%s/%s/%s/%s/%s' % (header,YYYY,MM,DD,HH)
-    FileName = 'FB107L-%s%s%s-%s%s%s-KST.JPG' % (YYYY,MM,DD,HH,MI,SS)
+    Dir = '.%s/%s/%s/%s/%s' % (header, YYYY, MM, DD, HH)
+    FileName = 'FB107L-%s%s%s-%s%s%s-KST.JPG' % (YYYY, MM, DD, HH, MI, SS)
 
     ### move file to Dir
     if not os.path.exists(Dir):
@@ -132,7 +131,7 @@ def moveFile(file,isFB):
     From = file
     To = Dir + '/' + FileName
     try:
-        fi = open(From,'rb')
+        fi = open(From, 'rb')
         dat = fi.read().encode("hex")
         fi.close()
     except:
@@ -148,27 +147,22 @@ def moveFile(file,isFB):
         return
 
 
-
-
-
-
 # --------------------------------------------------------------------------
 def main():
 # --------------------------------------------------------------------------
     curTime = getYYYYMMDDHHMISS()
 
     ### 59초 전 -> 1분 전에 찍힌 파일들을 검토
-    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime,-59))
+    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime, -59))
 
-    #YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
+    # YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
     TargetFiles = getFiles(YYYY, MM, DD, HH, MI)
-
 
     for file in TargetFiles:
         if isFireBall(file) == True:
-            moveFile(file,True)
+            moveFile(file, True)
         else:
-            moveFile(file,False)
+            moveFile(file, False)
 
 
 main()
