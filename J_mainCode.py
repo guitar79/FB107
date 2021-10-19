@@ -2,17 +2,15 @@ import time, os, sys, cv2, numpy
 import FB107_utilities as FB
 
 
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 def getCurrentDate():
 # --------------------------------------------------------------------------
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
-
 
 # --------------------------------------------------------------------------
 def getYYYYMMDDHHMISS():
 # --------------------------------------------------------------------------
     return time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
-
 
 # -------------------------------------------------------------------------------
 def calcYYYYMMDDHHMISS(YYYYMMDDHHMISS, Sec):
@@ -22,7 +20,6 @@ def calcYYYYMMDDHHMISS(YYYYMMDDHHMISS, Sec):
     NewYYYYMMDDHHMISS = time.strftime("%Y%m%d%H%M%S", time.localtime(NewTime))
     return NewYYYYMMDDHHMISS
 
-
 # --------------------------------------------------------------------------
 def diffSecYYYYMMDDHHMISS(DT1, DT2):
 # --------------------------------------------------------------------------
@@ -30,7 +27,6 @@ def diffSecYYYYMMDDHHMISS(DT1, DT2):
     time2 = time.mktime(time.strptime(DT2, "%Y%m%d%H%M%S"))
     sec = int(time1 - time2)
     return sec
-
 
 # --------------------------------------------------------------------------
 def cvtToFieldYYYYMMDDHHMISS(YYYYMMDDHHMISS):
@@ -92,44 +88,18 @@ def updateLog(data):
     logDir = ".log.txt"
     f = open(logDir, 'a')
     f.write(data)
-
+    f.close()
 
 # --------------------------------------------------------------------------
-def moveFile(file, isFB):
+def moveFile(fromDir, toDir, fileName, code):
 # --------------------------------------------------------------------------
 
-    ### 파일의 이름을 토대로 연, 월, 일, 시간, 분, 초를 찾아냄
-    fileName = file.split('-')
-    YYYY = fileName[1][0:4]
-    MM = fileName[1][4:6]
-    DD = fileName[1][6:8]
-    HH = fileName[2][0:2]
-    MI = fileName[2][2:4]
-    SS = fileName[2][4:6]
+    From = "%s/%s" % (fromDir,fileName)
+    To = "%s/%s" % (toDir, fileName)
 
-    print('move')
-    header = ""
+    if not os.path.exists(toDir):
+        os.mkdir(toDir)
 
-    ### 유성이 검출
-    if isFB == True:
-        header = "FB"
-        updateLog("[%s/%s/%s %s:%s:%s] A fireball found" % (YYYY, MM, DD, HH, MI, SS))
-
-    ### 검출 안됨
-    else:
-        header = "NotFB"
-        updateLog("[%s/%s/%s %s:%s:%s] Fireball not found" % (YYYY, MM, DD, HH, MI, SS))
-
-    ### 새롭게 옮길 파일의 디렉토리
-    Dir = '.%s/%s/%s/%s/%s' % (header, YYYY, MM, DD, HH)
-    FileName = 'FB107L-%s%s%s-%s%s%s-KST.JPG' % (YYYY, MM, DD, HH, MI, SS)
-
-    ### move file to Dir
-    if not os.path.exists(Dir):
-        os.mkdir(Dir)
-
-    From = file
-    To = Dir + '/' + FileName
     try:
         fi = open(From, 'rb')
         dat = fi.read().encode("hex")
@@ -146,23 +116,42 @@ def moveFile(file, isFB):
         updateLog("Error in writing filr : [%s]" % To)
         return
 
+    updateLog("%s, %s" % (fileName, code))
+
 
 # --------------------------------------------------------------------------
 def main():
 # --------------------------------------------------------------------------
-    curTime = getYYYYMMDDHHMISS()
 
-    ### 59초 전 -> 1분 전에 찍힌 파일들을 검토
-    YYYY, MM, DD, HH, MI, SS = cvtToFieldYYYYMMDDHHMISS(calcYYYYMMDDHHMISS(curTime, -59))
+    save_Dir_Name = '../SAVE/'
+    result_Dir_Name = '../result/'
+    FB_Dir_Name = 'Fireball'
+    Cloud_Dir_Name = 'Cloud'
+    Plane_Dir_Name = 'Plane'
+    Default_Dir_Name = 'Default'
 
-    # YYYY/MM/DD/HH 디렉토리에 MI분에 찍힌 사진들을 리스트로 만든 것
-    TargetFiles = getFiles(YYYY, MM, DD, HH, MI)
+    processing_Date = '2021-10-04'
+    YYYY=processing_Date[:4]
+    MM=processing_Date[5:7]
+    DD=processing_Date[8:10]
 
-    for file in TargetFiles:
-        if isFireBall(file) == True:
-            moveFile(file, True)
+    processing_Dir = "%s%s/%s/%s" % (save_Dir_Name,YYYY,MM,DD)
+
+    fullnames = FB.getFullnameListOfallFiles(processing_Dir)
+    length = len(fullnames)
+
+    for i in range(length):
+        fileName = fullnames[i]
+        code = ""
+        if code == "FB":
+            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD), fileName, code)
+        elif code == "Cloud":
+            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, Cloud_Dir_Name, YYYY, MM, DD), fileName, code)
+        elif code == "Plane":
+            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, Plane_Dir_Name, YYYY, MM, DD), fileName, code)
+        elif code == "Default":
+            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, Default_Dir_Name, YYYY, MM, DD), fileName, code)
         else:
-            moveFile(file, False)
-
+            updateLog("Error in receiving code")
 
 main()
