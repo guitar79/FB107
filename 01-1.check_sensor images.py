@@ -21,8 +21,8 @@ for i in range(len(fullnames)) :
 
     
     processing_log = "#This file is created using Python : https://github.com/guitar79/MODIS_hdf_Python\n"
-    processing_log += "filename, brightness, star No, FB\n".format(filename, aaa, bbb, bbb)
-    processing_log += "{}, {}, {}, {}".format(filename, aaa, bbb, bbb)
+    processing_log += "filename, brightness, star No, FB\n".format(fullname, aaa, bbb, bbb)
+    processing_log += "{}, {}, {}, {}".format(fullname, aaa, bbb, bbb)
            
             
             
