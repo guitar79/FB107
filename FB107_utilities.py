@@ -14,8 +14,9 @@ remove(filename) - Remove exif from JPEG, or WebP.
 transplant(filename, filename) - Transplant exif from JPEG to JPEG.
 created by guitar79@naver.com
 """
-from datetime import datetime
+#from datetime import datetime
 # from astropy.io import fits
+
 
 def write_log2(log_file, log_str):
     import os
@@ -30,6 +31,24 @@ def write_log(log_file, log_str):
     print(msg)
     with open(log_file, 'a') as f:
         f.write(msg + '\n')
+
+
+def difference_2images(img1_fullname, img2_fullname, minlight):
+    # 유성체감시네트워크에 적용될, 최종 유성 및 기타 물체 탐지 코드
+    # img1_fullname, img2_fullname, 
+    # minlight : int
+    # import numpy as np
+    import cv2
+    image1 = cv2.imread("{}".format(img1_fullname), cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
+    image2 = cv2.imread("{}".format(img2_fullname), cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
+    different = cv2.absdiff(image1, image2) #둘에서 달라진 점을 계산
+    #height = image1.shape[0]    #세로 픽셀 수
+    #width = image1.shape[1]    #가로 픽셀 수
+    #absofD = cv2.mean(different)
+    #minlight = 100
+    ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
+    return ret, mask
+
 
 
 def getFullnameListOfallFiles(dirName):
@@ -69,7 +88,7 @@ def getFullnameListOfallsubDirs1(dirName):
 
 
 def getFullnameListOfallsubDirs(dirName):
-    ###############################################
+    ##############################################3
     import os
     allFiles = list()
     for it in os.scandir(dirName):
@@ -81,9 +100,6 @@ def getFullnameListOfallsubDirs(dirName):
 
 
 def checkDuplicated_jpg(fullname1, fullname2):
-    ###############################################
-    # 같은 내용의 .jpg 파일이 있는지 확인              #
-    ###############################################
     import cv2
     # pip install opencv-python
     # pip install opencv-contrib-python
@@ -109,18 +125,12 @@ def checkDuplicated_jpg(fullname1, fullname2):
 
 # for checking time
 def print_working_time(cht_start_time):
-    ###############################################
-    # 프로그램이 작동하고 있는 시간을 반환              #
-    ###############################################
     from datetime import datetime
     working_time = (datetime.now() - cht_start_time)  # total days for downloading
     return print('working time ::: %s' % (working_time))
 
 
 def get_image_datetime_str(fullname):
-    ####################################################
-    # 파일의 풀네임을 입력받아 YYYYMMDD-HHMISS 형식으로 반환 #
-    ####################################################
     import exifread
     f = open(fullname, 'rb')
     tags = exifread.process_file(f)
@@ -312,11 +322,7 @@ def get_image_Software(fullname):
     return image_Software
 
 
-def write_log(log_file, log_str):
-    import os
-    with open(log_file, 'a') as log_f:
-        log_f.write("{}, {}\n".format(os.path.basename(__file__), log_str))
-    return print("{}, {}\n".format(os.path.basename(__file__), log_str))
+
 
 
 def bgr2rgb(bgr_image):

@@ -1,0 +1,97 @@
+import cv2
+import os
+import pandas as pd 
+import FB107_utilities
+
+log_file = os.path.basename(__file__)[:-3]+".log"
+err_log_file = os.path.basename(__file__)[:-3]+"_err.log"
+print ("log_file: {}".format(log_file))
+print ("err_log_file: {}".format(err_log_file))    
+
+base_dir_name = '../SAVE/'
+
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+processing_date_str = '2021-10-04'
+processing_DT1 = datetime.fromisoformat(processing_date_str)
+processing_DT2 = processing_DT1 + relativedelta(days=1)
+
+#processing_dir_name = "{}{:04d}/{:02d}/{:02d}/".format(base_dir_name, processing_DT1.year, processing_DT2.month, processing_DT2.day)
+                        
+processing_dir_names = ["{}{:04d}/{:02d}/{:02d}/".format(base_dir_name, processing_DT1.year, processing_DT1.month, processing_DT1.day),
+                        "{}{:04d}/{:02d}/{:02d}/".format(base_dir_name, processing_DT2.year, processing_DT2.month, processing_DT2.day)]
+save_dir_name = "../result/"
+processing_log_fname = "statistics_result_{}.csv".format(processing_date_str)
+
+
+for processing_dir_name in processing_dir_names : 
+    fullnames = FB107_utilities.getFullnameListOfallFiles(processing_dir_name)
+df_new = pd.DataFrame({'fullname':fullnames})
+
+#jpg만 남김
+df_new = df_new[df_new.fullname.str.contains(".JPG")] 
+    
+#make list all files
+if os.path.exists('{0}{1}'.format(save_dir_name, processing_log_fname)) :
+    df_old = pd.read_csv('{0}{1}'.format(save_dir_name, processing_log_fname), sep=',')
+    #make list all files
+
+if len(df_new) == len(df_old) :
+    df = df_old
+else :
+    df = df_new
+
+print(df)
+
+minlight = 100
+
+for idx, row in df.iterrows():
+    try : 
+        print(row["fullname"])
+        #df.at[idx, "fullname_dt"] = MODIS_hdf_utilities.fullname_to_datetime_for_DAAC3K(df.loc[idx, "fullname"])
+        image1 = cv2.imread("{}".format(df.loc[idx, "fullname"]), cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
+        image2 = cv2.imread("{}".format(df.loc[idx+1, "fullname"]), cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
+        different = cv2.absdiff(image1, image2) #둘에서 달라진 점을 계산
+        print("debug #1")
+        ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
+        df.at[idx, "sum(sum(mask))"] = sum(sum(mask))
+        print('idx, sum(sum(mask)): {}, {}'.format(idx, sum(sum(mask))))
+    
+    except Exception as err :
+        #FB107_utilities.write_log(err_log_file, err)
+        print(err)
+        continue  
+
+df.to_csv('{0}{1}'.format(save_dir_name, processing_log_fname))
+#         .format(fullnames[i], sum(sum(mask)))
+
+  
+
+# for i in range(len(fullnames)-1) :
+#     #i=0
+#     image1 = cv2.imread("{}".format(fullnames[i]), cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
+#     image2 = cv2.imread("{}".format(fullnames[i+1]), cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
+#     different = cv2.absdiff(image1, image2) #둘에서 달라진 점을 계산
+#     ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
+    
+#         .format(fullnames[i], sum(sum(mask)))
+    
+
+    # 
+    # #height = image1.shape[0]    #세로 픽셀 수
+    # #width = image1.shape[1]    #가로 픽셀 수
+    # #absofD = cv2.mean(different)
+    # #minlight = 100
+    # ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
+    
+    
+    # ret, mask = FB107_utilities.difference_2images(fullnames[i], fullnames[i+1], minlight)
+    # print("type(ret): {}".format(type(ret)))
+    # print("type(mask): {}".format(type(mask)))
+    
+    # processing_log += "{}, {}, {}, {}, {}, {}, {}, {}, {}, {}".\
+    #     format(fullnames[i], aaa, bbb, bbb, time.strftime('%Y-%m-%d %H:%M:%S'))
+
+# print('#' * 60)
+# with open('{0}{1}'.format(save_dir_name, processing_log_fname), 'w') as f:
+#     f.write(processing_log)
