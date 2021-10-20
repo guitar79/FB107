@@ -7,6 +7,28 @@ import FB107_utilities
 def getMAD(data):
     return np.mean(np.absolute(data - np.median(data)))
 
+def getDOP(data):
+    allnum = 0
+    u = 0
+    for i in range(len(data) - 1):
+        for j in range(len(data[i]) - 1):
+            u += 1
+            allnum += (abs(int(data[i][j+1]) - int(data[i][j]))+abs(int(data[i+1][j])- int(data[i][j])))
+    return allnum / u
+
+def getNOBP(data):
+    nobp = 0
+    hgt = len(data)
+    wid = len(data[0])
+    print(hgt)
+    mean = np.mean(data)
+    for i in range(round(hgt/2)):
+        for j in range(wid):
+            if data[i][j] > mean+10 :
+                nobp+=1
+    return nobp
+
+
 log_file = os.path.basename(__file__)[:-3]+".log"
 err_log_file = os.path.basename(__file__)[:-3]+"_err.log"
 print ("log_file: {}".format(log_file))
@@ -16,7 +38,7 @@ base_dir_name = '../SAVE/'
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-processing_date_str = '2021-09-22'
+processing_date_str = '2021-10-14'
 processing_DT = datetime.fromisoformat(processing_date_str)
 processing_DT1 = processing_DT + relativedelta(hours=12)
 processing_DT2 = processing_DT + relativedelta(hours=36)
@@ -85,7 +107,7 @@ for idx, row in df.iterrows():
 
         thumbnail = cv2.resize(image1_Gray, dsize = (600,400))
         print("deb")
-        cv2.putText(thumbnail, '{0}, {1}, {2}'.format(round(np.mean(v),2), round(np.std(v),3), round(getMAD(v),3)), (30,30), 0, 0.4, 255, 1)
+        cv2.putText(thumbnail, '{0}, {1}, {2}, DOP: {3}, NOBP: {4}'.format(round(np.mean(v),2), round(np.std(v),3), round(getMAD(v),3), round(getDOP(v),3), getNOBP(v)), (30,30), 0, 0.4, 255, 1)
         cv2.imwrite('{0}{1}_{2}.png'.format(thumbnail_dir_name, processing_date_str, k), thumbnail)
         df.at[idx, "brightness_mean"] = np.mean(v)
         print('idx, brightness_mean: {}, {}'.format(idx, np.mean(v)))

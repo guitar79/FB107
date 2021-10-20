@@ -150,28 +150,32 @@ def main():
 
     f = open(Location_csv, 'rb')
     dat = f.read()
-    Data = dat.decode().split('\r\n')
+    Data = dat.decode().split('\n')
     Data = Data[1:]
 
     length = len(Data)-2
     infos = []
     for i in range(length):
         Data[i] = Data[i].split(',')
-        print(Data[i])
+        print(Data[i][1])
+    ct = [0,0,0]
     for i in range(length):
         try:
             fileName = Data[i][1]
             Code = Data[i][4]
-            if int(float(Code)) > 20:
+            if int(float(Code)) > 50:
+                Code = 2
+            elif int(float(Code)) > 20:
                 Code = 0
             else:
                 Code = 1
-            codeList = ["FB", "Default"]
+            codeList = ["FB", "Default", "Cloud"]
             if int(Code) >= 0 and int(Code) < len(codeList):
                 code = codeList[int(Code)]
             else:
                 updateLog("Error in receiving code")
 
+            ct[int(Code)] += 1
             fileNames = fileName.split('-')
             YYYY=fileNames[1][:4]
             MM=fileNames[1][4:6]
@@ -180,8 +184,8 @@ def main():
             MI=fileNames[2][2:4]
             SS=fileNames[2][4:6]
             processing_Dir = "%s%s/%s/%s/%s" % (save_Dir_Name, YYYY, MM, DD, HH)
-            fileName = fileName.split("\\")
-            fileName = fileName[1]
+            fileName = fileName.split("/")
+            fileName = fileName[-1]
             print(fileName)
             if code == "FB":
                 moveFile(processing_Dir, "%s%s/%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD, HH), fileName, code)
@@ -199,7 +203,11 @@ def main():
         except Exception as err:
             print(err)
             continue
-
+    updateLog("")
+    updateLog("Task finished!")
+    updateLog("Fireballs : "+str(ct[0]))
+    updateLog("Clouds : "+str(ct[2]))
+    updateLog("Default : "+str(ct[1]))
     updateLog("\n\n")
 
 main()
