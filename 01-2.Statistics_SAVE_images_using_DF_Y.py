@@ -4,17 +4,8 @@ import pandas as pd
 import numpy as np
 import FB107_utilities
 
-def getMAD(data): # 중앙값으로부터의 절대편차의 평균
+def getMAD(data):
     return np.mean(np.absolute(data - np.median(data)))
-
-def getDOP(data):
-    k=0
-    u=0
-    for i in range(len(data)-1):
-        for j in range(len(data[i])-1):
-            u+=1
-            k+=abs(data[i][j]-data[i][j+1])+abs(data[i][j] - data[i+1][j])
-    return k/u
 
 log_file = os.path.basename(__file__)[:-3]+".log"
 err_log_file = os.path.basename(__file__)[:-3]+"_err.log"
@@ -25,7 +16,7 @@ base_dir_name = '../SAVE/'
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-processing_date_str = '2021-09-23'
+processing_date_str = '2021-09-22'
 processing_DT = datetime.fromisoformat(processing_date_str)
 processing_DT1 = processing_DT + relativedelta(hours=12)
 processing_DT2 = processing_DT + relativedelta(hours=36)

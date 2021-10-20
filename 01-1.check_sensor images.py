@@ -1,33 +1,28 @@
 import os
 from datetime import datetime
-import time
 import FB107_utilities
 
 base_dir_name = '../STIL/'
 
 fullnames = FB107_utilities.getFullnameListOfallFiles(base_dir_name)
 
-#for fullname in fullnames :
-#    fullname = fullnames[0]
-#    fullname_el = fullname.split("/")
-#    filename_el = fullname_el[-1].split("-")
+for fullname in fullnames :
+    fullname = fullnames[0]
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
     
-for i in range(len(fullnames)-1) :
+for i in range(len(fullnames)) :
     fullname = fullnames[0]
     fullname_el = fullname.split("/")
     filename_el = fullname_el[-1].split("-")
     
     fullnames[i+1]
     fullnames[i]
-    
-    Imgfirst = cv2.imread('{}'.format(fullnames[i]))
-    Imgsecond = cv2.imread('{}'.format(fullnames[i+1]))
-
 
     
     processing_log = "#This file is created using Python : https://github.com/guitar79/MODIS_hdf_Python\n"
-    processing_log += "filename, BrightR(mean), BrightR(std), BrightR(max), BrightR(min), BrightG(mean), BrightG(std), BrightG(max), BrightG(min),  BrightB(mean), BrightB(std), BrightB(max), BrightB(min), ,star No, FB, proc time\n".format(filename, aaa, bbb, bbb)
-    processing_log += "{}, {}, {}, {}, {}, {}, {}, {}, {}, {}".format(filename, aaa, bbb, bbb, time.strftime('%Y-%m-%d %H:%M:%S'))
+    processing_log += "filename, brightness, star No, FB\n".format(fullname, aaa, bbb, bbb)
+    processing_log += "{}, {}, {}, {}".format(fullname, aaa, bbb, bbb)
            
             
             

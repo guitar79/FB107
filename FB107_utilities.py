@@ -14,8 +14,9 @@ remove(filename) - Remove exif from JPEG, or WebP.
 transplant(filename, filename) - Transplant exif from JPEG to JPEG.
 created by guitar79@naver.com
 """
-from datetime import datetime
+#from datetime import datetime
 # from astropy.io import fits
+
 
 def write_log2(log_file, log_str):
     import os
@@ -30,6 +31,43 @@ def write_log(log_file, log_str):
     print(msg)
     with open(log_file, 'a') as f:
         f.write(msg + '\n')
+
+def fullname_to_datetime_for_SAVE(fullname):
+    ############################################################
+    #for ../SAVE/2021/10/05/00/FB107L-20211005-000011-KST.JPG'
+    #
+    from datetime import datetime
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
+    #print(filename_el[1][:4], filename_el[1][4:6], filename_el[1][6:8], filename_el[2][:2], filename_el[2][2:4], filename_el[2][4:6])
+    return datetime(int(filename_el[1][:4]), int(filename_el[1][4:6]), int(filename_el[1][6:8]), int(filename_el[2][:2]), int(filename_el[2][2:4]), int(filename_el[2][4:6]))
+
+def fullname_to_DT_str_for_SAVE(fullname):
+    ############################################################
+    #for ../SAVE/2021/10/05/00/FB107L-20211005-000011-KST.JPG'
+    #
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
+    #print(filename_el[1][:4], filename_el[1][4:6], filename_el[1][6:8], filename_el[2][:2], filename_el[2][2:4], filename_el[2][4:6])
+    return "{}-{}-{} {}:{}:{}".format(filename_el[1][:4], filename_el[1][4:6], filename_el[1][6:8], filename_el[2][:2], filename_el[2][2:4], filename_el[2][4:6])
+
+
+def difference_2images(img1_fullname, img2_fullname, minlight):
+    # 유성체감시네트워크에 적용될, 최종 유성 및 기타 물체 탐지 코드
+    # img1_fullname, img2_fullname, 
+    # minlight : int
+    # import numpy as np
+    import cv2
+    image1 = cv2.imread("{}".format(img1_fullname), cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
+    image2 = cv2.imread("{}".format(img2_fullname), cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
+    different = cv2.absdiff(image1, image2) #둘에서 달라진 점을 계산
+    #height = image1.shape[0]    #세로 픽셀 수
+    #width = image1.shape[1]    #가로 픽셀 수
+    #absofD = cv2.mean(different)
+    #minlight = 100
+    ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
+    return ret, mask
+
 
 
 def getFullnameListOfallFiles(dirName):
@@ -303,11 +341,7 @@ def get_image_Software(fullname):
     return image_Software
 
 
-def write_log(log_file, log_str):
-    import os
-    with open(log_file, 'a') as log_f:
-        log_f.write("{}, {}\n".format(os.path.basename(__file__), log_str))
-    return print("{}, {}\n".format(os.path.basename(__file__), log_str))
+
 
 
 def bgr2rgb(bgr_image):
