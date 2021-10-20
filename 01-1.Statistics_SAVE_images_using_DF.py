@@ -1,6 +1,7 @@
 import cv2
 import os
 import pandas as pd 
+import numpy as np
 import FB107_utilities
 
 log_file = os.path.basename(__file__)[:-3]+".log"
@@ -28,20 +29,25 @@ for processing_dir_name in processing_dir_names :
     fullnames = FB107_utilities.getFullnameListOfallFiles(processing_dir_name)
 df_new = pd.DataFrame({'fullname':fullnames})
 
-#jpg만 남김
+#jpg만 남기고 지우기
 df_new = df_new[df_new.fullname.str.contains(".JPG")] 
-    
+
+for idx, row in df_new.iterrows():
+    df_new.at[idx, "DT"] = FB107_utilities.fullname_to_DT_str_for_SAVE(df_new.loc[idx, "fullname"])
+df_new['DT'] =pd.to_datetime(df_new.DT)
+df_new.sort_values(by='DT')
+#df_new.index = df_new['DT']
+
 #make list all files
 if os.path.exists('{0}{1}'.format(save_dir_name, processing_log_fname)) :
     df_old = pd.read_csv('{0}{1}'.format(save_dir_name, processing_log_fname), sep=',')
     #make list all files
-
-if len(df_new) == len(df_old) :
-    df = df_old
+    if len(df_new) == len(df_old) :
+        df = df_old
 else :
     df = df_new
 
-print(df)
+print("df:\n{}".format(df))    
 
 minlight = 100
 
@@ -49,13 +55,24 @@ for idx, row in df.iterrows():
     try : 
         print(row["fullname"])
         #df.at[idx, "fullname_dt"] = MODIS_hdf_utilities.fullname_to_datetime_for_DAAC3K(df.loc[idx, "fullname"])
-        image1 = cv2.imread("{}".format(df.loc[idx, "fullname"]), cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
-        image2 = cv2.imread("{}".format(df.loc[idx+1, "fullname"]), cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
-        different = cv2.absdiff(image1, image2) #둘에서 달라진 점을 계산
+        image1_Gray = cv2.imread("{}".format(df.loc[idx, "fullname"]), cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
+        image2_Gray = cv2.imread("{}".format(df.loc[idx+1, "fullname"]), cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
+        different = cv2.absdiff(image1_Gray, image2_Gray) #둘에서 달라진 점을 계산
         print("debug #1")
         ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
         df.at[idx, "sum(sum(mask))"] = sum(sum(mask))
         print('idx, sum(sum(mask)): {}, {}'.format(idx, sum(sum(mask))))
+        
+        image1_color = cv2.imread("{}".format(df.loc[idx, "fullname"]))
+        print("debug #2")
+        
+        image1_hsv = cv2.cvtColor(image1_color, cv2.COLOR_BGR2HSV)
+        print("debug #3")
+        
+        h, s, v = cv2.split(image1_hsv)
+        print("debug #4")
+        df.at[idx, "brightness_mean"] = np.mean(v)
+        print('idx, brightness_mean: {}, {}'.format(idx, np.mean(v)))
     
     except Exception as err :
         #FB107_utilities.write_log(err_log_file, err)

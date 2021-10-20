@@ -32,6 +32,25 @@ def write_log(log_file, log_str):
     with open(log_file, 'a') as f:
         f.write(msg + '\n')
 
+def fullname_to_datetime_for_SAVE(fullname):
+    ############################################################
+    #for ../SAVE/2021/10/05/00/FB107L-20211005-000011-KST.JPG'
+    #
+    from datetime import datetime
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
+    #print(filename_el[1][:4], filename_el[1][4:6], filename_el[1][6:8], filename_el[2][:2], filename_el[2][2:4], filename_el[2][4:6])
+    return datetime(int(filename_el[1][:4]), int(filename_el[1][4:6]), int(filename_el[1][6:8]), int(filename_el[2][:2]), int(filename_el[2][2:4]), int(filename_el[2][4:6]))
+
+def fullname_to_DT_str_for_SAVE(fullname):
+    ############################################################
+    #for ../SAVE/2021/10/05/00/FB107L-20211005-000011-KST.JPG'
+    #
+    fullname_el = fullname.split("/")
+    filename_el = fullname_el[-1].split("-")
+    #print(filename_el[1][:4], filename_el[1][4:6], filename_el[1][6:8], filename_el[2][:2], filename_el[2][2:4], filename_el[2][4:6])
+    return "{}-{}-{} {}:{}:{}".format(filename_el[1][:4], filename_el[1][4:6], filename_el[1][6:8], filename_el[2][:2], filename_el[2][2:4], filename_el[2][4:6])
+
 
 def difference_2images(img1_fullname, img2_fullname, minlight):
     # 유성체감시네트워크에 적용될, 최종 유성 및 기타 물체 탐지 코드
