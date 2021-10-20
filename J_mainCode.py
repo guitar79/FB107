@@ -134,18 +134,17 @@ def moveFile(fromDir, toDir, fileName, code):
 
     updateLog("Moved Successful!!! [%s], Code : %s" % (fileName, code))
 
+# --------------------------------------------------------------------------
 def init():
+# --------------------------------------------------------------------------
     YYYYMMDDHHMISS = getYYYYMMDDHHMISS()
     YYYYMMDD = YYYYMMDDHHMISS[:8]
     HHMISS = YYYYMMDDHHMISS[8:]
     updateLog("[%s-%s] : Running on %s" % (YYYYMMDD, HHMISS, Location_csv))
 
-
 # --------------------------------------------------------------------------
 def main():
 # --------------------------------------------------------------------------
-
-
 
     init()
 
