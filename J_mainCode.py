@@ -129,13 +129,19 @@ def main():
     Cloud_Dir_Name = 'Cloud'
     Plane_Dir_Name = 'Plane'
     Default_Dir_Name = 'Default'
-
+    from datetime import datetime
+    from dateutil.relativedelta import relativedelta
     processing_Date = '2021-10-04'
+    processing_Date1 = datetime.fromisoformat(processing_Date)
+    processing_Date2 = processing_Date1 + relativedelta(days = 1)
     YYYY=processing_Date[:4]
     MM=processing_Date[5:7]
     DD=processing_Date[8:10]
 
-    processing_Dir = "%s%s/%s/%s" % (save_Dir_Name,YYYY,MM,DD)
+
+    processing_dir_names = [
+    "{}{:04d}/{:02d}/{:02d}/".format(save_Dir_Name, processing_Date1.year, processing_Date1.month, processing_Date1.day),
+    "{}{:04d}/{:02d}/{:02d}/".format(save_Dir_Name, processing_Date2.year, processing_Date2.month, processing_Date2.day)]
 
     N = input()
     length = int(N)
@@ -146,23 +152,30 @@ def main():
         infos.append([A[0][-1], A[1]])
 
     for i in range(length):
-        fileName = infos[i][0]
-        Code = infos[i][1]
-        codeList = ["FB", "Default"]
-        if int(Code) >= 0 and int(Code) < len(codeList):
-            code = codeList[int(Code)]
-        else:
-            updateLog("Error in receiving code")
+        try:
+            fileName = infos[i][0]
+            Code = infos[i][1]
+            codeList = ["FB", "Default"]
+            if int(Code) >= 0 and int(Code) < len(codeList):
+                code = codeList[int(Code)]
+            else:
+                updateLog("Error in receiving code")
 
-        if code == "FB":
-            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD), fileName, code)
-        elif code == "Cloud":
-            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, Cloud_Dir_Name, YYYY, MM, DD), fileName, code)
-        elif code == "Plane":
-            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, Plane_Dir_Name, YYYY, MM, DD), fileName, code)
-        elif code == "Default":
-            moveFile(processing_Dir,"%s%s/%s/%s/%s" % (result_Dir_Name, Default_Dir_Name, YYYY, MM, DD), fileName, code)
-        else:
-            updateLog("Error in receiving code")
+            if code == "FB":
+                moveFile(processing_Dir, "%s%s/%s/%s/%s" % (result_Dir_Name, FB_Dir_Name, YYYY, MM, DD), fileName, code)
+            elif code == "Cloud":
+                moveFile(processing_Dir, "%s%s/%s/%s/%s" % (result_Dir_Name, Cloud_Dir_Name, YYYY, MM, DD), fileName,
+                         code)
+            elif code == "Plane":
+                moveFile(processing_Dir, "%s%s/%s/%s/%s" % (result_Dir_Name, Plane_Dir_Name, YYYY, MM, DD), fileName,
+                         code)
+            elif code == "Default":
+                moveFile(processing_Dir, "%s%s/%s/%s/%s" % (result_Dir_Name, Default_Dir_Name, YYYY, MM, DD), fileName,
+                         code)
+            else:
+                updateLog("Error in receiving code")
+        except Exception as err:
+            print(err)
+            continue
 
 main()
