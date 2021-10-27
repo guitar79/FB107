@@ -53,31 +53,6 @@ def cvtToFieldYYYYMMDDHHMISS(YYYYMMDDHHMISS):
     return YYYY, MM, DD, HH, MI, SS
 
 
-# --------------------------------------------------------------------------
-def getFiles(YYYY, MM, DD, HH, MI):
-# --------------------------------------------------------------------------
-    Dir = './%s/%s/%s/%s' % (YYYY, MM, DD, HH)
-    ret = ""
-
-    for file in os.listdir(Dir):
-
-        f = file.split('-')
-        HHMISS = f[2]
-        MINUTE = HHMISS[2:4]
-        if MINUTE == MI:
-            ret.append(file)
-
-    return ret
-
-
-# --------------------------------------------------------------------------
-def isFireBall(file):
-# --------------------------------------------------------------------------
-    if True:
-        return True
-    else:
-        return False
-
 
 ###(유성인지 아닌지 판별)
 """
