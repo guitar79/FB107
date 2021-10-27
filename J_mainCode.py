@@ -1,8 +1,4 @@
-import time, os, sys, cv2, numpy
-import FB107_utilities as FB
-import shutil
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+import time, os
 
 processing_Date = '2021-10-04'
 save_Dir_Name = '../SAVE/'
@@ -52,25 +48,6 @@ def cvtToFieldYYYYMMDDHHMISS(YYYYMMDDHHMISS):
     SS = YYYYMMDDHHMISS[12:14]
     return YYYY, MM, DD, HH, MI, SS
 
-
-
-###(유성인지 아닌지 판별)
-"""
-# 유성체감시네트워크에 적용될, 최종 유성 및 기타 물체 탐지 코드
-import numpy as np
-import cv2
-image1 = cv2.imread( "Filename.format", cv2.IMREAD_GRAYSCALE )  #직전에 촬영된 이미지 불러오기
-image2 = cv2.imread( "Filename.format", cv2.IMREAD_GRAYSCALE )  #방금 촬영된 이미지 불러오기
-different = cv2.absdiff( image1, image2 ) #둘에서 달라진 점을 계산
-height = image1.shape[0]    #세로 픽셀 수
-width = image1.shape[1]    #가로 픽셀 수
-absofD = cv2.mean(different)
-
-minlight = 100
-ret, mask = cv2.threshold(different, minlight, 255, cv2.THRESH_BINARY)
-"""
-
-
 # --------------------------------------------------------------------------
 def updateLog(data):
 # --------------------------------------------------------------------------
@@ -104,7 +81,8 @@ def moveFile(fromDir, toDir, fileName, code):
         fo.write(dat)
         fo.close()
     except Exception as err:
-        updateLog("Error in writing filr : [%s]" % To)
+        updateLog("Error in writing file : [%s]" % To)
+        print(err)
         return
 
     updateLog("Moved Successful!!! [%s], Code : %s" % (fileName, code))
