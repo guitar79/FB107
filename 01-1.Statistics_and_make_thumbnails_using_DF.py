@@ -2,26 +2,19 @@ import cv2
 import os
 import pandas as pd 
 import numpy as np
-from urllib import parse
-import Python_utilities
 import FB107_utilities
 
-#########################################
-log_dir = "logs/"
-log_file = "{}{}.log".format(log_dir, os.path.basename(__file__)[:-3])
-err_log_file = "{}{}_err.log".format(log_dir, os.path.basename(__file__)[:-3])
+log_file = os.path.basename(__file__)[:-3]+".log"
+err_log_file = os.path.basename(__file__)[:-3]+"_err.log"
 print ("log_file: {}".format(log_file))
-print ("err_log_file: {}".format(err_log_file))
-#########################################
+print ("err_log_file: {}".format(err_log_file))    
 
 base_dir_name = '../SAVE/'
 save_dir_name = "../result_Kevin/"
 thumbnail_dir_name = "../thumbnail_Kevin/"
-
 from datetime import datetime
 
 proc_dates = []
-
 #make processing period tuple
 from dateutil.relativedelta import relativedelta
 start_DT = datetime(2020, 5, 1) #convert startdate to date type
@@ -133,7 +126,7 @@ for proc_date in proc_dates[:]:
                                                     cv2.FONT_HERSHEY_SIMPLEX, 
                                                     0.5, (255, 255, 255))
                 cv2.imwrite("{}{}".format(thumbnail_dir_name, fullname_el[-1]), image1_color_thumnail)
-
+            
             except Exception as err :
                 #FB107_utilities.write_log(err_log_file, err)
                 print(err)
