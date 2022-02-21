@@ -5,7 +5,7 @@ import cv2
 import FB107_utilities
 import Python_utilities
 
-processing_date_str = "2021-11-01"
+processing_date_str = "2021-10-04"
 
 #if add_log == True:
 #    log_file = "{}_logfile.log".format("My")
