@@ -32,7 +32,7 @@ conda env remove -n FB107_Python_win_env
 conda env list
 
 ## anaconda 가상환경 만들기
-conda create -n FB107_Python_ubuntu_env
+conda create -n FB107_Python_ubuntu_env python=3.8
 
 ## activate 가상환경 시작
 conda activate FB107_Python_ubuntu_env
@@ -41,7 +41,8 @@ conda activate FB107_Python_ubuntu_env
 conda deactivate
 
 # install module
-conda install spyder pandas opencv
+conda install pandas
+pip install opencv-python
 conda install -c conda-forge exifread pymysql
 
 #pip install cartopy

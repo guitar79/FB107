@@ -22,6 +22,7 @@ SET_MariaDB = True
 if SET_MariaDB == True :
     import pymysql
     db_host = '192.168.0.20'
+    db_host = '10.114.0.120'
 
     db_user = 'modis'
     db_pass = 'Modis12345!'
