@@ -20,7 +20,7 @@ print ("err_log_file: {}".format(err_log_file))
 #########################################
 import pymysql
 db_host = '192.168.0.20'
-#db_host = '10.114.0.120'
+db_host = '10.114.0.120'
 
 db_user = 'modis'
 db_pass = 'Modis12345!'
@@ -50,6 +50,7 @@ if table_exist == 0:
         `brightness_std` VARCHAR(16) default NULL ,
         `Line` VARCHAR(5) default NULL ,
     	`EXIF` TEXT default NULL ,
+    	 `EXP_time` VARCHAR(10) NULL DEFAULT NULL AFTER `EXIF`;
         `Update_DT` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`id`)) ENGINE = InnoDB;""".format(db_name, tb_name)
     cur.execute(qry)
