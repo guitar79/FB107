@@ -124,4 +124,3 @@ for fullname in fullnames :
             #Python_utilities.write_log(err_log_file, err)
             print("err with {}".format(fullname))
             continue
-  

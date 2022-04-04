@@ -61,7 +61,6 @@ else :
     colunm_dic = cur.fetchall()
     print(colunm_dic)
 
-
 #########################################
 
 base_drs = ['../SAVE/']
