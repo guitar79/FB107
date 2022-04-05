@@ -2,6 +2,7 @@ import cv2
 import os
 import pandas as pd 
 import numpy as np
+import exifread
 import pymysql
 from urllib import parse
 import Python_utilities
@@ -20,7 +21,7 @@ print ("err_log_file: {}".format(err_log_file))
 #########################################
 import pymysql
 db_host = '192.168.0.20'
-db_host = '10.114.0.120'
+#db_host = '10.114.0.120'
 
 db_user = 'modis'
 db_pass = 'Modis12345!'
@@ -50,7 +51,7 @@ if table_exist == 0:
         `brightness-std` VARCHAR(16) default NULL ,
         `Line` VARCHAR(5) default NULL ,
     	`EXIF` TEXT default NULL ,
-    	`EXP_time` VARCHAR(10) NULL DEFAULT NULL AFTER `EXIF`;
+    	`EXP-time` VARCHAR(10) NULL DEFAULT NULL AFTER `EXIF`;
         `Update-DT` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`id`)) ENGINE = InnoDB;""".format(db_name, tb_name)
     cur.execute(qry)
@@ -63,76 +64,19 @@ else :
 
 #########################################
 
-base_drs = ['../SAVE/']
-
-fullnames = []
-for dirName in base_drs :
-    #dirName = "../Aerosol/MODIS Aqua C6.1 - Aerosol 5-Min L2 Swath 3km/2002/185/"
-    try :
-        fullnames.extend(Python_utilities.getFullnameListOfallFiles("{}".format(dirName)))
-    except Exception as err :
-        #Python_utilities.write_log(err_log_file, err)
-        print(err)
-        continue
-fullnames = sorted(fullnames)
-#########################################
+qry = "SELECT `fullname` FROM `{}`.`{}` WHERE `EXP-time` IS NULL;".format(db_name, tb_name)
+cur.execute(qry)
+fullnames = cur.fetchall()
 
 for fullname in fullnames :
-    #fullname = fullnames[10]
-    if fullname[-4:].lower() == ".jpg":
-        print("Starting: {}".format(fullname))
-        fullname_el = fullname.split("/")
-        filename_el = fullname_el[-1].split("/")
-
-        try:
-            # cur = conn.cursor()
-
-            q2 = """SELECT `id` FROM `{}`.`{}` WHERE `fullname`= '{}';""".format(db_name, table_hdf_info, fullname)
-            q2_sel = cur.execute(q2)
-            print("q2: {}".format(q2))
-
-            '''
-            q3 = """SELECT `id` FROM `{}`.`{}` WHERE `histogram_png`= '{}{}_hist.png';""".format(db_name,
-                            table_hdf_info, fullname[:(fullname.find(fullname_el[-1]))],
-                            fullname_el[-1][:-4])
-            q3_sel = cur.execute(q3)
-            print("q3: {}".format(q3))
-            print("q3_sel: {}".format(q3_sel))
-    
-            q4 = """SELECT `id` FROM `{}`.`{}` WHERE `fullname`= '{}';""".format(db_name,
-                            table_hdf_info, fullname)
-            q4_sel = cur.execute(q4)
-            print("q3: {}".format(q4))
-            print("q3_sel: {}".format(q4_sel))
-            '''
-
-            image_color = cv2.imread("{}".format(fullname))
-            image_hsv = cv2.cvtColor(image_color, cv2.COLOR_BGR2HSV)
-            h, s, v = cv2.split(image_hsv)
-            brightness-mean, brightness-std = np.mean(v), np.std(v)
-
-            if q2_sel == 0:
-                print("q2_sel: {}".format(q2_sel))
-                q3_insert = """INSERT INTO `{0}`.`{1}`                                         
-                                    (`fullname`, `brightness-mean`, `brightness-std`) 
-                                    VALUES ('{2}', '{3:.03f}', '{4:.03f}');""".format(db_name, table_hdf_info, fullname,
-                                                        brightness-mean, brightness-std)
-
-                cur.execute(q3_insert)
-
-            else:
-                print("q2_sel: {}".format(q2_sel))
-                q3_update = """UPDATE `{0}`.`{1}` 
-                                SET `fullname` = '{2}' , 
-                                `brightness-mean` = '{3}', 
-                                `brightness-std` = '{4}'  
-                                WHERE `{1}`.`id` = {5};""".format(db_name, table_hdf_info, fullname,
-                                                          brightness-mean, brightness-std)
-                print("q3_update: {}".format(q3_update))
-                cur.execute(q3_update)
-            conn.commit()
-        except Exception as err :
-            #Python_utilities.write_log(err_log_file, err)
-            print("err with {}".format(fullname))
-            continue
-  
+    print(fullname['fullname'])
+    with open(fullname['fullname'], 'rb') as f:
+        tags = exifread.process_file(f)
+        print(tags["EXIF ExposureTime"])
+        qry = """UPDATE `{0}`.`{1}` 
+                SET `EXP-time` = '{2}'   
+                WHERE `{1}`.`fullname` = {3};""".format(db_name, tb_name,
+                                                  tags["EXIF ExposureTime"], fullname['fullname'])
+        print("q3_update: {}".format(qry))
+        cur.execute(qry)
+    conn.commit()
