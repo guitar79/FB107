@@ -75,7 +75,7 @@ for fullname in fullnames :
         print(tags["EXIF ExposureTime"])
         qry = """UPDATE `{0}`.`{1}` 
                 SET `EXP-time` = '{2}'   
-                WHERE `{1}`.`fullname` = {3};""".format(db_name, tb_name,
+                WHERE `{1}`.`fullname` = '{3}';""".format(db_name, tb_name,
                                                   tags["EXIF ExposureTime"], fullname['fullname'])
         print("q3_update: {}".format(qry))
         cur.execute(qry)
